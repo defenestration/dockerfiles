@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+RUN apt update -y
+
+RUN apt install -yq \
+    vim tmux less strace gnupg ca-certificates \
+    socat curl iptables iproute2 net-tools iputils-ping \
+    conntrack traceroute mtr dnsutils tcpdump nmap
+
+# RUN apt install -yq bpfcc-tools python3-bpfcc bpftrace
+
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+    apt-key add - && \
+    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | \
+    tee -a /etc/apt/sources.list.d/kubernetes.list && \
+    apt update && apt install -y kubectl
+
+# azure cli
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# homebrew
+#RUN apt install -yq \
+#    git build-essential procps file ;\
+#    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
