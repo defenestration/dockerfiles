@@ -14,6 +14,7 @@ RUN apk update && \
     jq \
     bind-tools \
     kubectl \
+    openssh-client \
     zsh 
 
 ENTRYPOINT zsh
