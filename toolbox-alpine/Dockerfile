@@ -15,6 +15,7 @@ RUN apk update && \
     bind-tools \
     kubectl \
     openssh-client \
+    cifs-utils \
     zsh 
 
 ENTRYPOINT zsh

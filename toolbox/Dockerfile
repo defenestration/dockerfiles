@@ -2,9 +2,9 @@ FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
-RUN apt update -y
-
-RUN apt install -yq \
+# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+RUN apt update -y ; \
+    apt install -yq \
     bash-completion \
     ca-certificates \
     curl \
@@ -21,7 +21,8 @@ RUN apt install -yq \
     tcpdump \
     traceroute \
     vim \
-    wget \ 
+    wget \
+    cifs-utils \
     && apt clean
 
 # RUN apt install -yq bpfcc-tools python3-bpfcc bpftrace
@@ -46,3 +47,4 @@ RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
 #    git build-essential procps file ;\
 #    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+ENTRYPOINT /bin/bash
