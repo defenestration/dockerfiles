@@ -16,6 +16,8 @@ RUN apk update && \
     kubectl \
     openssh-client \
     cifs-utils \
-    zsh 
+    zsh ;\
+    apk cache clean ;\
+    ln -s /etc/profile.d/color_prompt.sh.disabled /etc/profile.d/color_prompt.sh
 
-ENTRYPOINT zsh
+ENTRYPOINT bash
