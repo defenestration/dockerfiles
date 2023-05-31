@@ -1,9 +1,12 @@
 FROM alpine:latest
+# https://github.com/alpine-docker/k8s/blob/master/Dockerfile 
+ARG KUBECTL_VERSION=1.27.1
+ARG ARCH=amd64
+
 # add 'testing' repos (kubectl
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories
 
 RUN apk update && \
-    apk add \
+    apk add --no-cache \
     bash \
     vim \
     less \
@@ -13,11 +16,16 @@ RUN apk update && \
     yq \
     jq \
     bind-tools \
-    kubectl \
     openssh-client \
     cifs-utils \
-    zsh ;\
-    apk cache clean ;\
-    ln -s /etc/profile.d/color_prompt.sh.disabled /etc/profile.d/color_prompt.sh
+    netcat-openbsd 
 
-ENTRYPOINT bash
+RUN ln -s /etc/profile.d/color_prompt.sh.disabled /etc/profile.d/color_prompt.sh
+
+# Install kubectl
+RUN echo $ARCH && \
+    curl -sLO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl && \
+    mv kubectl /usr/bin/kubectl && \
+    chmod +x /usr/bin/kubectl
+
+ENTRYPOINT ["bash"]

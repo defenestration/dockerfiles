@@ -4,7 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
 RUN apt update -y ; \
-    apt install -yq \
+    apt install -yq --no-install-recommends \
     bash-completion \
     ca-certificates \
     curl \
@@ -16,6 +16,7 @@ RUN apt update -y ; \
     less \
     mtr \
     net-tools \
+    netcat \
     nmap \
     socat \
     tcpdump \
