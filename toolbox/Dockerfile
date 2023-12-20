@@ -48,4 +48,8 @@ RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
 #    git build-essential procps file ;\
 #    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+#color prompt
+RUN echo "PS1='\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;34m\]#\033[00m\] '" >> /root/.bashrc
+
+
 ENTRYPOINT /bin/bash
