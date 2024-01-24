@@ -12,9 +12,16 @@ DOCKERHUB_USER=defenestration
 
 build() {
 echo '> build'
-docker build . --tag ${IMAGENAME}:${TAG}
+docker build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --tag ${IMAGENAME}:${TAG}_amd64
 docker image ls ${IMAGENAME}:${TAG}
 }
+
+build_arm64() {
+echo '> build_arm64'
+docker build . --platform darwin/arm64 --tag ${IMAGENAME}:${TAG}_arm64
+docker image ls ${IMAGENAME}:${TAG}_arm64
+}
+
 
 validate() {
 echo '> validate'
