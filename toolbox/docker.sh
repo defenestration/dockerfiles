@@ -12,7 +12,7 @@ DOCKERHUB_USER=defenestration
 
 build() {
 echo '> build'
-docker build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --tag ${IMAGENAME}:${TAG}_amd64
+docker build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --tag ${IMAGENAME}:${TAG}_amd64 && \
 docker image ls ${IMAGENAME}:${TAG}
 }
 
@@ -39,8 +39,7 @@ docker run -it $ARGS --entrypoint '' --hostname "${IMAGENAME}:${TAG}" ${IMAGENAM
 }
 
 br() {
-build
-run
+build && run
 }
 
 bs() {

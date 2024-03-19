@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: toolbox
+  creationTimestamp: null
+spec:
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - command:
+        - ls
+        args:
+        - -lah
+        - /var/lib/kubelet/pods
+        image: defenestration/toolbox
+        name: toolbox-abrev
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - "SYS_PTRACE"
+          # privileged: true
+        volumeMounts:
+        - mountPath: /run/containerd
+          name: containerdfs
+        - mountPath: /var/lib/kubelet/pods
+          name: containerdvolumes
+        - mountPath: /proc
+          name: hostproc
+      restartPolicy: Never
+      volumes:
+      - hostPath:
+          path: /run/containerd
+          type: ""
+        name: containerdfs
+      - hostPath:
+          path: /var/lib/kubelet/pods
+          type: ""
+        name: containerdvolumes
+      - hostPath:
+          path: /proc
+          type: ""
+        name: hostproc

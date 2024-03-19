@@ -2,6 +2,7 @@ FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
+
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
 RUN apt update -y ; \
     apt install -yq --no-install-recommends \
@@ -24,21 +25,24 @@ RUN apt update -y ; \
     vim \
     wget \
     cifs-utils \
+    postgresql-client \
     && apt clean
 
 # RUN apt install -yq bpfcc-tools python3-bpfcc bpftrace
 
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-    apt-key add - && \
-    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | \
-    tee -a /etc/apt/sources.list.d/kubernetes.list && \
-    apt update && apt install -y kubectl \
-    && apt clean
+# kubectl repository
+#https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
+RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && \
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list && \
+    apt update -y && apt install kubectl && apt clean
 
 # yq
 RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
     chmod +x /usr/bin/yq
 
+# dotnet tools 
+RUN wget https://aka.ms/dotnet-dump/linux-x64 -O /usr/local/bin/dotnet-dump && chmod +x /usr/local/bin/dotnet-dump && \
+    wget https://aka.ms/dotnet-gcdump/linux-x64 -O /usr/local/bin/dotnet-gcdump && chmod +x /usr/local/bin/dotnet-gcdump
 
 # azure cli
 # RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && apt clean

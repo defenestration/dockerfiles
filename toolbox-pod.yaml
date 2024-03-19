@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: toolbox-abrev
+  name: toolbox-abrev
+  namespace: default
+spec:
+  containers:
+  - args:
+    - bash
+    image: defenestration/toolbox
+    name: toolbox-abrev
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
