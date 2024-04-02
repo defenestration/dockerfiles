@@ -26,6 +26,7 @@ RUN apt update -y ; \
     wget \
     cifs-utils \
     postgresql-client \
+    unzip \
     && apt clean
 
 # RUN apt install -yq bpfcc-tools python3-bpfcc bpftrace
@@ -40,17 +41,25 @@ RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://pkgs.k8s.io/core:/stable:/v
 RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
     chmod +x /usr/bin/yq
 
-# dotnet tools 
-RUN wget https://aka.ms/dotnet-dump/linux-x64 -O /usr/local/bin/dotnet-dump && chmod +x /usr/local/bin/dotnet-dump && \
-    wget https://aka.ms/dotnet-gcdump/linux-x64 -O /usr/local/bin/dotnet-gcdump && chmod +x /usr/local/bin/dotnet-gcdump
+# dotnet tools (requires runtime though)
+#RUN wget https://aka.ms/dotnet-dump/linux-x64 -O /usr/local/bin/dotnet-dump && chmod +x /usr/local/bin/dotnet-dump && \
+#    wget https://aka.ms/dotnet-gcdump/linux-x64 -O /usr/local/bin/dotnet-gcdump && chmod +x /usr/local/bin/dotnet-gcdump
 
 # azure cli
-# RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && apt clean
+#RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && apt clean
 
 # homebrew
 #RUN apt install -yq \
 #    git build-essential procps file ;\
 #    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# kubelogin 
+#RUN cd /tmp; wget https://github.com/Azure/kubelogin/releases/download/v0.1.1/kubelogin-linux-amd64.zip  ;\
+#  unzip  kubelogin-linux-amd64.zip ; \
+#  rm -f kubelogin-linux-amd64.zip ; \
+#  mv bin/linux_amd64/kubelogin /usr/local/bin ; \
+#  chmod +x /usr/local/bin/kubelogin
+
 
 #color prompt
 ENV force_color_prompt=yes
