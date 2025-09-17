@@ -60,14 +60,24 @@ shell
 
 push_dockerhub() {
 echo '> push to dockerhub'
-#docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
-#docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
-buildx
+echo "docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
+docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
+echo "docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
+docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
+#buildx
 }
 
 login_dockerhub(){
 #docker login docker.io -u ${DOCKERHUB_USER}
 docker login
+}
+
+push_tsctools() {
+echo '> push to tsctools'
+acrimg=tsctools.azurecr.io/${IMAGENAME}:${TAG}
+az acr login --name tsctools
+docker tag ${IMAGENAME}:${TAG} $acrimg
+docker push $acrimg
 }
 
 #if [[ $1 == "build" || $1 == "run"  || $1 == "shell" || $1 == "validate" ]] ; then

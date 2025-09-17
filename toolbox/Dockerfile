@@ -1,4 +1,5 @@
-FROM ubuntu:22.04
+#FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
@@ -17,7 +18,7 @@ RUN apt update -y ; \
     less \
     mtr \
     net-tools \
-    netcat \
+    ncat \
     nmap \
     socat \
     tcpdump \
