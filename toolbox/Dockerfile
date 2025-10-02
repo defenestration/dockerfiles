@@ -11,6 +11,7 @@ RUN apt update -y ; \
     ca-certificates \
     curl \
     dnsutils \
+    fio \
     git \
     gnupg \
     iputils-ping \

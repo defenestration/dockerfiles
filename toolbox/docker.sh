@@ -14,9 +14,10 @@ DOCKERHUB_USER=defenestration
 
 buildx() {
 echo '> buildx'
-# start buildx container
+# start buildx container. 
 docker buildx create --name buildx
-login_dockerhub && docker buildx build . --platform linux/amd64,linux/aarch64,linux/arm64/v8 --cache-from="${DOCKERHUB_USER}/${IMAGENAME}" --tag ${DOCKERHUB_USER}/${IMAGENAME}:${TAG} --builder buildx --push
+login_dockerhub && \
+docker buildx build . --platform linux/amd64,linux/arm64 --cache-from=${DOCKERHUB_USER}/${IMAGENAME}:${TAG} --tag ${DOCKERHUB_USER}/${IMAGENAME}:${TAG} --builder buildx --push
 docker buildx rm buildx
 }
 
@@ -24,10 +25,11 @@ build() {
 echo '> build'
 docker build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --tag ${IMAGENAME}:${TAG}_amd64 && \
 docker image ls ${IMAGENAME}:${TAG}
-build_arm64
+#build_arm64
 }
 
 build_arm64() {
+# use buildx instead
 echo '> build_arm64'
 docker build . --platform linux/arm64/v8 --tag ${IMAGENAME}:${TAG}_arm64
 docker image ls ${IMAGENAME}:${TAG}_arm64
@@ -58,13 +60,23 @@ build
 shell
 }
 
+build_and_push() {
+echo "> build and push"
+#build
+#push_dockerhub
+buildx
+}
+
 push_dockerhub() {
 echo '> push to dockerhub'
-echo "docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
-docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
-echo "docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
-docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
-#buildx
+
+#echo "docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
+#docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
+#echo "docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
+#docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
+
+# buildx has to build again but does the multi-platform image.
+buildx
 }
 
 login_dockerhub(){
