@@ -9,21 +9,27 @@ ARGS=""
 CMD=""
 #ARGS="-v $PWD:/mkdocs -v "${docs_path}":/docs"
 DOCKERHUB_USER=defenestration
+BASE_IMAGE=ubuntu:26.04
+DATE_VER=$(date +%y.%m.%d)
 
-# on M3 mac, the linux/arm64/v8 platform should work.
+# on M3 mac pulling the proper amd image first seems to help ensure you build using the proper image.
+pull_base() {
+docker pull --platform linux/amd64 $BASE_IMAGE
+}
 
 buildx() {
 echo '> buildx'
 # start buildx container. 
+pull_base
 docker buildx create --name buildx
-login_dockerhub && \
-docker buildx build . --platform linux/amd64,linux/arm64 --cache-from=${DOCKERHUB_USER}/${IMAGENAME}:${TAG} --tag ${DOCKERHUB_USER}/${IMAGENAME}:${TAG} --builder buildx --push
+docker buildx build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --builder buildx --load
 docker buildx rm buildx
 }
 
 build() {
 echo '> build'
-docker build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --tag ${IMAGENAME}:${TAG}_amd64 && \
+pull_base
+docker build . --platform linux/amd64 --tag ${IMAGENAME}:${TAG} --no-cache --tag ${IMAGENAME}:${TAG}_amd64 && \
 docker image ls ${IMAGENAME}:${TAG}
 #build_arm64
 }
@@ -70,13 +76,14 @@ buildx
 push_dockerhub() {
 echo '> push to dockerhub'
 
-#echo "docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
-#docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
-#echo "docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
-#docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
-
+echo "docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
+docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
+docker tag ${IMAGENAME}:${TAG} ${DOCKERHUB_USER}/${IMAGENAME}:${DATE_VER}
+echo "docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}"
+docker push ${DOCKERHUB_USER}/${IMAGENAME}:${TAG}
+docker push ${DOCKERHUB_USER}/${IMAGENAME}:${DATE_VER}
 # buildx has to build again but does the multi-platform image.
-buildx
+#buildx
 }
 
 login_dockerhub(){
@@ -86,10 +93,11 @@ docker login
 
 push_tsctools() {
 echo '> push to tsctools'
-acrimg=tsctools.azurecr.io/${IMAGENAME}:${TAG}
+acrimg=tsctools.azurecr.io/${IMAGENAME}
 az acr login --name tsctools
-docker tag ${IMAGENAME}:${TAG} $acrimg
-docker push $acrimg
+docker tag ${IMAGENAME}:${TAG} $acrimg:${TAG}
+docker push $acrimg:${TAG}
+docker push ${acrimg}:${DATE_VER}
 }
 
 #if [[ $1 == "build" || $1 == "run"  || $1 == "shell" || $1 == "validate" ]] ; then

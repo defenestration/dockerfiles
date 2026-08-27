@@ -1,5 +1,5 @@
-#FROM ubuntu:22.04
-FROM ubuntu:24.04
+ARG TARGETPLATFORM=linux/amda64
+FROM --platform=$TARGETPLATFORM ubuntu:26.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
@@ -66,4 +66,4 @@ RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
 #color prompt
 ENV force_color_prompt=yes
 
-ENTRYPOINT /bin/bash
+#ENTRYPOINT [ "/usr/bin/bash" ]
